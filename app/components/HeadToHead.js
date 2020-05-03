@@ -51,23 +51,31 @@ this.handleChange = this.handleChange.bind(this)
             teamTwo.forEach(el=>
                 teamTwoCount+= el.payroll)
             teamTwoCount = teamTwoCount/teamTwo.length
-            const displayData = [{team:this.state.teamOne,payroll:teamOneCount},{team:this.state.teamTwo, payroll:teamTwoCount}]
+            let displayData =[]
+            if(teamOneCount >= teamTwoCount){
+                 displayData = [{team:this.state.teamOne,payroll:teamOneCount,expensive: true},{team:this.state.teamTwo, payroll:teamTwoCount, expensive: false}]
+
+            }
+            else{
+                 displayData = [{team:this.state.teamOne,payroll:teamOneCount, expensive:false},{team:this.state.teamTwo, payroll:teamTwoCount,expensive:true}]
+            }
             console.log(displayData)
 
             return(
             <div>
             <VictoryChart 
             theme = {VictoryTheme.material}
+            domainPadding = {50}
             >
                 <VictoryAxis
-                    // tickValues = {[this.state.teamOne, this.state.teamTwo]}
+                    tickValues = {[this.state.teamOne, this.state.teamTwo]}
                     style = {{
                         tickLabels: {
                             width: 30,
-                            fontSize: 3,
+                            fontSize: 6,
                             padding: 5,
                             margin:5
-                        },
+                        }
                     }}
 
                     axisLabelComponent= {<VictoryLabel dy = {15}/>}
@@ -75,20 +83,28 @@ this.handleChange = this.handleChange.bind(this)
                 />
                 <VictoryAxis
                     dependentAxis
-                    axisLabelComponent= {<VictoryLabel dy = {-15}/>}
+                    axisLabelComponent= {<VictoryLabel dy = {-30}/>}
                     label = "Payroll (Millions)"   
                 />
             
                 <VictoryBar
+                    style={{
+                        data:{
+                             fill:({datum})=>datum.expensive === true ? "#c43a31" : "#1C77C3" 
+                        }
+                    }}
                     data = {displayData.map(el=>{
                         return(
                             {
                                 x: el.team,
                                 y: el.payroll,
-                                image: el.imageUrl
+                                image: el.imageUrl,
+                                expensive: el.expensive
                             }
                         )
                     })}
+                    labels={({ datum }) => datum.y}
+
                    // dataComponent = {<TeamPoint/>}
                 />
             </VictoryChart>
