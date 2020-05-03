@@ -17,6 +17,9 @@ const winningAndMoney = db.define('prandwins',{
     payroll: {
         type: Sequelize.FLOAT,
         allowNull: false
+    },
+    imageUrl: {
+        type: Sequelize.STRING
     }
 })
 
