@@ -1,7 +1,7 @@
 import React, {Component} from 'react'
 import axios from 'axios'
 import TeamPoint from './TeamPoint'
-import { VictoryBar,VictoryChart, VictoryAxis, VictoryTheme, VictoryLabel, VictoryLine, VictoryScatter} from 'victory'
+import { VictoryBar,VictoryChart, VictoryAxis, VictoryTheme, VictoryLabel, VictoryLine, VictoryScatter, VictoryTooltip} from 'victory'
 
 
 class Scatter extends Component {
@@ -41,23 +41,61 @@ this.handleChange = this.handleChange.bind(this)
         console.log(relevantData)
             return(
             <div>
-            <VictoryChart 
-            theme = {VictoryTheme.material}
-            >
-            
-                <VictoryScatter
-                    data = {relevantData.map(el=>{
-                        return(
-                            {
-                                x: el.payroll,
-                                y: el.wins,
-                                image: el.imageUrl
+                <div>
+                <h1>Wins Vs. Payroll</h1>
+                <VictoryChart 
+                theme = {VictoryTheme.material}
+                domainPadding = {10}
+                >
+                    <VictoryAxis
+                        tickValues = {[50,75,100,125,150,175,200,225,250]}
+                        style = {{
+                            tickLabels: {
+                                width: 10,
+                                padding: 5,
+                                margin:5
                             }
-                        )
-                    })}
-                   // dataComponent = {<TeamPoint/>}
-                ></VictoryScatter>
-            </VictoryChart>
+                        }}
+
+                        axisLabelComponent= {<VictoryLabel dy = {20}/>}
+                        label ="Payroll (Millions USD)"  
+                    />
+                    <VictoryAxis
+                    dependentAxis
+                        style = {{
+                            tickLabels: {
+                                width: 30,
+                                padding: 5,
+                                margin:5
+                            }
+                        }}
+
+                        axisLabelComponent= {<VictoryLabel dy = {-15}/>}
+                        label ="Wins"  
+                    />
+                
+                    <VictoryScatter
+                        data = {relevantData.map(el=>{
+                            return(
+                                {
+                                    x: el.payroll,
+                                    y: el.wins,
+                                    image: el.imageUrl,
+                                    team : el.team
+                                }
+                            )
+                        })}
+                        style = {{
+                            data: {
+                                fill: "#1C77C3" 
+                           }
+                        }}
+                        labels = {({datum})=>`payroll: $${datum.x},\n wins: ${datum.y}, \n team: ${datum.team}`}
+                        labelComponent={<VictoryTooltip dy={0} centerOffset={{ x: 25 }} />}
+                    // dataComponent = {<TeamPoint/>}
+                    ></VictoryScatter>
+                </VictoryChart>
+                </div>
                 <div>
                     <h3>Start Year</h3>
                     <select className = 'startYear' label = "start year" value = {this.state.startYear} onChange = {this.handleChange}>
